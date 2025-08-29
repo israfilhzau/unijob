@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart University Job Finder - Bangladesh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        /* Style for links that have been visited */
+        .visited-link {
+            background-color: #e5e7eb; /* Gray-200 */
+            color: #4b5563; /* Gray-600 */
+            cursor: default;
+        }
+        .visited-link:hover {
+            background-color: #d1d5db; /* Gray-300 */
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+
+        <!-- Header Section -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">Smart University Job Finder</h1>
+            <p class="text-md text-slate-600 mt-2">Remembers and marks the links you've already visited.</p>
+        </header>
+
+        <!-- Search Bar - Sticky -->
+        <div class="sticky-header bg-slate-100/80 backdrop-blur-sm py-4 mb-6">
+            <div class="relative">
+                <input type="text" id="searchInput" onkeyup="renderFilteredUniversities()" placeholder="Type to search for a university..." 
+                class="w-full p-3 pl-10 text-md bg-white border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- This container will hold the university cards -->
+        <div id="university-container"></div>
+
+        <!-- Footer Section -->
+        <footer class="text-center mt-10 py-4">
+            <p class="text-xs text-slate-500">© ${new Date().getFullYear()} University Job Finder. Designed for all devices.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const universities = [
+            { id: 'du', name: 'University of Dhaka', category: 'General', website: 'https://www.du.ac.bd', career: 'https://jobs.du.ac.bd/' },
+            { id: 'ru', name: 'University of Rajshahi', category: 'General', website: 'https://www.ru.ac.bd', career: 'https://job.ru.ac.bd/' },
+            { id: 'cu', name: 'University of Chittagong', category: 'General', website: 'https://cu.ac.bd', career: 'https://cu.ac.bd/v2/category/job-circulars/' },
+            { id: 'ju', name: 'Jahangirnagar University', category: 'General', website: 'https://www.juniv.edu', career: 'https://juniv.edu/discussion?event_id=5' },
+            { id: 'iu', name: 'Islamic University, Bangladesh', category: 'General', website: 'https://www.iu.ac.bd', career: 'https://www.iu.ac.bd/index.php/site/notice' },
+            { id: 'ku', name: 'Khulna University', category: 'General', website: 'https://ku.ac.bd', career: 'https://ku.ac.bd/career' },
+            { id: 'jnu', name: 'Jagannath University', category: 'General', website: 'https://www.jnu.ac.bd', career: 'https://career.jnu.ac.bd/' },
+            { id: 'cou', name: 'Comilla University', category: 'General', website: 'https://www.cou.ac.bd', career: 'https://cou.ac.bd/career-job' },
+            { id: 'jkkniu', name: 'Jatiya Kabi Kazi Nazrul Islam University', category: 'General', website: 'https://www.jkkniu.edu.bd', career: 'https://www.jkkniu.edu.bd/career' },
+            { id: 'brur', name: 'Begum Rokeya University, Rangpur', category: 'General', website: 'https://www.brur.ac.bd', career: 'https://www.brur.ac.bd/career' },
+            { id: 'bu', name: 'University of Barishal', category: 'General', website: 'https://www.bu.ac.bd', career: 'https://bu.ac.bd/?ref=jobs' },
+            { id: 'rub', name: 'Rabindra University, Bangladesh', category: 'General', website: 'https://www.rub.ac.bd', career: 'https://rub.ac.bd/about-us.php?page=job-circular' },
+            { id: 'sust', name: 'Shahjalal University of Science & Technology', category: 'Science & Tech', website: 'https://www.sust.edu', career: 'https://career.sust.edu/' },
+            { id: 'hstu', name: 'Hajee Mohammad Danesh Science & Technology', category: 'Science & Tech', website: 'https://www.hstu.ac.bd', career: 'https://hstu.ac.bd/page/single_notice/type/c/id/1259' },
+            { id: 'mbstu', name: 'Mawlana Bhashani Science & Technology', category: 'Science & Tech', website: 'https://mbstu.ac.bd', career: 'https://mbstu.ac.bd/notices/' },
+            { id: 'pstu', name: 'Patuakhali Science & Technology', category: 'Science & Tech', website: 'https://www.pstu.ac.bd', career: 'https://www.pstu.ac.bd/careers' },
+            { id: 'nstu', name: 'Noakhali Science & Technology', category: 'Science & Tech', website: 'https://nstu.edu.bd', career: 'https://nstu.edu.bd/job.html' },
+            { id: 'just', name: 'Jashore University of Science & Technology', category: 'Science & Tech', website: 'https://www.just.edu.bd', career: 'https://just.edu.bd/notices?tag=job' },
+            { id: 'pust', name: 'Pabna University of Science & Technology', category: 'Science & Tech', website: 'https://www.pust.ac.bd', career: 'https://www.pust.ac.bd/notices/job' },
+            { id: 'bsmrstu', name: 'Bangabandhu Sheikh Mujibur Rahman STU', category: 'Science & Tech', website: 'https://www.bsmrstu.edu.bd', career: 'https://www.bsmrstu.edu.bd/dev/career/' },
+            { id: 'buet', name: 'Bangladesh University of Engg. & Tech. (BUET)', category: 'Engineering', website: 'https://www.buet.ac.bd', career: 'https://recruitment.buet.ac.bd/' },
+            { id: 'cuet', name: 'Chittagong University of Engg. & Tech. (CUET)', category: 'Engineering', website: 'https://www.cuet.ac.bd', career: 'https://jobs.cuet.ac.bd/' },
+            { id: 'ruet', name: 'Rajshahi University of Engg. & Tech. (RUET)', category: 'Engineering', website: 'https://www.ruet.ac.bd', career: 'https://www.ruet.ac.bd/career' },
+            { id: 'kuet', name: 'Khulna University of Engg. & Tech. (KUET)', category: 'Engineering', website: 'https://www.kuet.ac.bd', career: 'https://www.kuet.ac.bd/notices/all' },
+            { id: 'duet', name: 'Dhaka University of Engg. & Tech. (DUET)', category: 'Engineering', website: 'https://www.duet.ac.bd', career: 'https://www.duet.ac.bd/notice/career-notices' },
+            { id: 'bau', name: 'Bangladesh Agricultural University (BAU)', category: 'Agricultural', website: 'https://www.bau.edu.bd', career: 'https://bau.edu.bd/career' },
+            { id: 'bsmrau', name: 'Bangabandhu Sheikh Mujibur Rahman Agri. Uni.', category: 'Agricultural', website: 'https://www.bsmrau.edu.bd', career: 'https://gau.edu.bd/notice/job-circular-for-various-posts/' },
+            { id: 'sau-dhaka', name: 'Sher-e-Bangla Agricultural University', category: 'Agricultural', website: 'https://www.sau.edu.bd', career: 'https://www.sau.edu.bd/home/jobs/1' },
+            { id: 'sau-sylhet', name: 'Sylhet Agricultural University', category: 'Agricultural', website: 'https://www.sau.ac.bd', career: 'https://www.sau.ac.bd/notice/view_all/circular' },
+            { id: 'bsmmu', name: 'Bangabandhu Sheikh Mujib Medical University', category: 'Specialized', website: 'https://www.bsmmu.edu.bd', career: 'https://www.bsmmu.edu.bd/notice-board' },
+            { id: 'bup', name: 'Bangladesh University of Professionals (BUP)', category: 'Specialized', website: 'https://www.bup.edu.bd', career: 'https://bup.edu.bd/page/career' },
+            { id: 'butex', name: 'Bangladesh University of Textiles (BUTEX)', category: 'Specialized', website: 'https://www.butex.edu.bd', career: 'https://www.butex.edu.bd/category/job-circular/' },
+            { id: 'bsmrmu', name: 'Bangabandhu Sheikh Mujibur Rahman Maritime Uni.', category: 'Specialized', website: 'https://www.bsmrmu.edu.bd', career: 'https://bsmrmu.edu.bd/career/' }
+        ];
+
+        const container = document.getElementById('university-container');
+        const visitedLinksKey = 'visitedUniversityLinks';
+
+        // --- LocalStorage Helper Functions ---
+        function getVisitedLinks() {
+            const links = localStorage.getItem(visitedLinksKey);
+            return links ? new Set(JSON.parse(links)) : new Set();
+        }
+
+        function addVisitedLink(linkId) {
+            const visitedLinks = getVisitedLinks();
+            visitedLinks.add(linkId);
+            localStorage.setItem(visitedLinksKey, JSON.stringify([...visitedLinks]));
+        }
+
+        // --- Event Handling ---
+        container.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && e.target.dataset.linkId) {
+                const linkId = e.target.dataset.linkId;
+                addVisitedLink(linkId);
+                // No need to re-render, we'll just add the class directly for instant feedback
+                if (!e.target.classList.contains('visited-link')) {
+                    e.target.classList.add('visited-link');
+                    e.target.innerHTML = `
+                        <svg class="h-4 w-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        ${e.target.dataset.text}
+                    `;
+                }
+            }
+        });
+        
+        // --- Rendering Functions ---
+        function renderUniversities(data) {
+            const visitedLinks = getVisitedLinks();
+            container.innerHTML = ''; 
+            
+            const grouped = data.reduce((acc, uni) => {
+                acc[uni.category] = acc[uni.category] || [];
+                acc[uni.category].push(uni);
+                return acc;
+            }, {});
+
+            if (data.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-500 py-10">No universities found matching your search.</p>`;
+                return;
+            }
+
+            for (const category in grouped) {
+                const categoryHeader = document.createElement('h2');
+                categoryHeader.className = 'text-2xl font-bold text-slate-800 border-b-2 border-slate-300 pb-2 mb-6 mt-4';
+                categoryHeader.textContent = `${category} Universities`;
+                container.appendChild(categoryHeader);
+
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5';
+
+                grouped[category].forEach(uni => {
+                    const websiteLinkId = `${uni.id}-website`;
+                    const careerLinkId = `${uni.id}-career`;
+
+                    const isWebsiteVisited = visitedLinks.has(websiteLinkId);
+                    const isCareerVisited = visitedLinks.has(careerLinkId);
+
+                    const websiteBtnClass = isWebsiteVisited ? 'visited-link' : 'bg-blue-600 hover:bg-blue-700';
+                    const careerBtnClass = isCareerVisited ? 'visited-link' : 'bg-emerald-600 hover:bg-emerald-700';
+
+                    const websiteBtnText = isWebsiteVisited ? `
+                        <svg class="h-4 w-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Website` : 'Website';
+
+                    const careerBtnText = isCareerVisited ? `
+                        <svg class="h-4 w-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Career Page` : 'Career Page';
+
+                    const card = `
+                        <div class="bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-5 flex flex-col">
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4 flex-grow">${uni.name}</h3>
+                            <div class="mt-4 flex flex-col sm:flex-row sm:justify-end gap-3">
+                                <a href="${uni.website}" target="_blank" rel="noopener noreferrer" data-link-id="${websiteLinkId}" data-text="Website" class="w-full sm:w-auto text-center px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors flex items-center justify-center ${websiteBtnClass}">
+                                    ${websiteBtnText}
+                                </a>
+                                <a href="${uni.career}" target="_blank" rel="noopener noreferrer" data-link-id="${careerLinkId}" data-text="Career Page" class="w-full sm:w-auto text-center px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors flex items-center justify-center ${careerBtnClass}">
+                                    ${careerBtnText}
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    grid.innerHTML += card;
+                });
+                container.appendChild(grid);
+            }
+        }
+
+        function renderFilteredUniversities() {
+            const filter = document.getElementById('searchInput').value.toLowerCase();
+            const filteredData = universities.filter(uni => uni.name.toLowerCase().includes(filter));
+            renderUniversities(filteredData);
+        }
+
+        // Initial render on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUniversities(universities);
+        });
+
+    </script>
+</body>
+</html>
+
